@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core
+       http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!--配置ActiveMQ的连接信息-->
+    <amq:connectionFactory id="amqConnectionFactory" brokerURL="tcp://127.0.0.1:61616"
+                           userName="admin" password="admin"/>
+
+    <!--配置jms的连接工厂-->
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory"/>
+        <property name="sessionCacheSize" value="100"/>
+    </bean>
+
+    <!--配置消息队列-->
+    <bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="0804MQ"/>
+    </bean>
+
+    <!--配置JMS模板-->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <!--指定连接的工厂-->
+        <property name="connectionFactory" ref="connectionFactory"/>
+
+        <!--指定消息队列-->
+        <property name="defaultDestination" ref="queueDestination"/>
+
+        <!--接受的时间-->
+        <property name="receiveTimeout" value="1000"/>
+
+        <!--配置消息模式,若是false,就是queue,true就是topic,不配置,默认是false-->
+        <property name="pubSubDomain" value="false"/>
+    </bean>
+
+
+
+
+
+
+
+
+
+
+
+</beans>
